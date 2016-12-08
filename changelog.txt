@@ -1,0 +1,7 @@
+[battedball changelog]
+2016.12.08
+- using battedball.py from testcode as base
+- setting global playercount
+	- only dictionaries and lists are mutable objects
+		- modification modifies the original value
+	- numbers, strings, tuples are local scope
