@@ -1,4 +1,5 @@
-#import numpy
+import numpy as np
+import matplotlib.pyplot as plt
 import json
 
 # global dictionaries
@@ -19,7 +20,10 @@ def merge_fas():
 # end merge_fas
 
 # opens the json file and creates a dictionary
-# would be safer if json file is specified from user, but this is just for fun :)
+# working with static jason file 'playerlist.json'
+# playerlist.json retrieved from page source at https://baseballsavant.mlb.com/statcast_leaderboard
+# query: minimum batted balls events of 30, season 2016
+# would be better if json file is specified from user, but this is just for fun :)
 def parse_and_dict():
     # just change the filename to read the whole json
     # working on a smaller subset to save speed
@@ -29,6 +33,10 @@ def parse_and_dict():
     # json.loads turns the json into a list of dictionaries
     json1_data = json.loads(json1_str)  # gets the whole dictionary
     playercounter = 0
+    mavahs_name = ""
+    minahs_name = ""
+    mavahs = 0
+    minahs = 100
 
     # populate the dictionary
     for player in json1_data:
@@ -60,9 +68,16 @@ def parse_and_dict():
         else:
             player['freeagent'] = False
 
+        # dictionary population
         # sets a player's value in the dictionary
         pdict[pname] = player
         playercounter += 1
+        if player['avg_hit_speed'] > mavahs:
+            mavahs = player['avg_hit_speed']
+            mavahs_name = pname
+        if player['avg_hit_speed'] < minahs:
+            minahs = player['avg_hit_speed']
+            minahs_name = pname
 
         # debugging statements
         # pseason = str(player['season'])     # season is treated as an int
@@ -72,8 +87,49 @@ def parse_and_dict():
         # end loop
     # more code
     statdict['pc'] = playercounter
+    statdict['max_avg_hs'] = {}
+    statdict['min_avg_hs'] = {}
+    sdmax = statdict['max_avg_hs']  # useful when creating plots
+    sdmax['speed'] = mavahs
+    sdmax['name'] = mavahs_name
+    sdmin = statdict['min_avg_hs']  # useful when creating plots
+    sdmin['speed'] = minahs
+    sdmin['name'] = minahs_name
 # end parse_and_dict
 
+def fa_to_plot():
+    print 'hi'
+    fastr = "Free Agent"
+    notfastr = "Contracted Player"
+    facolor = 'red'
+    defcolor = 'blue'
+    fa_c = 0
+    nfa_c = 0
+    for key in pdict:
+        player = pdict[key]
+        if player['brl_pa'] != 0:
+            if player['freeagent']:
+                if fa_c == 1:
+                    plt.scatter(player['avg_hit_speed'], player['brl_pa'], c=facolor)
+                else:
+                    plt.scatter(player['avg_hit_speed'], player['brl_pa'], c=facolor, label=fastr)
+                    fa_c = 1
+            else:
+                if nfa_c == 1:
+                    plt.scatter(player['avg_hit_speed'], player['brl_pa'], c=defcolor)
+                else:
+                    plt.scatter(player['avg_hit_speed'], player['brl_pa'], c=defcolor, label=notfastr)
+                    nfa_c = 1
+    #plt.scatter(0, 0, c=facolor, label=fastr)
+    #plt.scatter(0, 0, c=defcolor, label=notfastr)
+    ptypes = np.array([fastr, notfastr])
+    ptypes_col = np.array([])
+    plt.xlabel('Average Hit Speed')
+    plt.ylabel('Barrels/PA')
+    plt.legend(loc='upper left', scatterpoints=1)
+    plt.grid(True)
+    plt.show()
+#end plotter
 
 # the main machine
 def main():
@@ -104,6 +160,7 @@ def main():
         print pcname + " isn't in the stat dictionary"
 
     merge_fas()
+    fa_to_plot()
     # debugging statement
     # for key in pdict:
     #    player = pdict[key]

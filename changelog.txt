@@ -6,3 +6,4 @@
 		- modification modifies the original value
 	- numbers, strings, tuples are local scope
 	source: http://stackoverflow.com/questions/15078519/python-dictionary-passed-as-an-input-to-a-function-acts-like-a-global-in-that-fu
+- added scatter plot
