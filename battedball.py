@@ -4,7 +4,6 @@ import json
 # global dictionaries
 # pdict: conversion of json file to dictionary of players and their batted ball numbers
 # statdict: stores certain playerbase stats, i.e. number of players in pdict
-
 pdict = {}
 statdict = {}
 
@@ -20,6 +19,7 @@ def merge_fas():
 # end merge_fas
 
 # opens the json file and creates a dictionary
+# would be safer if json file is specified from user, but this is just for fun :)
 def parse_and_dict():
     # just change the filename to read the whole json
     # working on a smaller subset to save speed
@@ -37,7 +37,7 @@ def parse_and_dict():
         # to int: avg_distance, avg_hr_distance, batter, max_distance, player_id
         player['avg_distance'] = int(player['avg_distance'])
         ahd = str(player['avg_hr_distance'])                # manually changed null to "null" in list
-        if ahd.lower() == 'null':
+        if ahd.lower() == 'null':               # sometimes ahd is null; players w/o hr
             player['avg_hr_distance'] = 0
         else:
             player['avg_hr_distance'] = int(player['avg_hr_distance'])
@@ -60,12 +60,15 @@ def parse_and_dict():
         else:
             player['freeagent'] = False
 
-        pdict[pname] = player       # sets a player's value in the dictionary
+        # sets a player's value in the dictionary
+        pdict[pname] = player
         playercounter += 1
+
         # debugging statements
         # pseason = str(player['season'])     # season is treated as an int
         # pmhs = player['max_hit_speed']
         # print "in " + pseason + ", " + pname + " had max hit speed of " + str(pmhs)
+
         # end loop
     # more code
     statdict['pc'] = playercounter
@@ -102,7 +105,7 @@ def main():
 
     merge_fas()
     # debugging statement
-    #for key in pdict:
+    # for key in pdict:
     #    player = pdict[key]
     #    if player['freeagent']:
     #        print player['name'] + " is a free agent"
