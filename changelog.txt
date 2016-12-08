@@ -7,3 +7,6 @@
 	- numbers, strings, tuples are local scope
 	source: http://stackoverflow.com/questions/15078519/python-dictionary-passed-as-an-input-to-a-function-acts-like-a-global-in-that-fu
 - added scatter plot
+- truncating floats
+	source: http://stackoverflow.com/questions/8595973/truncate-to-3-decimals-in-python
+-

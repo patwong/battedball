@@ -1,4 +1,4 @@
-import numpy as np
+#import numpy as np
 import matplotlib.pyplot as plt
 import json
 
@@ -37,6 +37,7 @@ def parse_and_dict():
     minahs_name = ""
     mavahs = 0
     minahs = 100
+    league_ahs = 0
 
     # populate the dictionary
     for player in json1_data:
@@ -55,6 +56,7 @@ def parse_and_dict():
 
         # to float: avg_hit_speed, brl_pa(%), brl_percent(%), fbld, gb, max_hit_speed, min_hit_speed
         player['avg_hit_speed'] = float(player['avg_hit_speed'])
+        league_ahs = league_ahs + player['avg_hit_speed']
         player['brl_pa'] = float(player['brl_pa'].strip('%')) / 100
         player['brl_percent'] = float(player['brl_percent'].strip('%')) / 100
         player['fbld'] = float(player['fbld'])
@@ -95,6 +97,7 @@ def parse_and_dict():
     sdmin = statdict['min_avg_hs']  # useful when creating plots
     sdmin['speed'] = minahs
     sdmin['name'] = minahs_name
+    statdict['league_ahs'] = float('%.2f' % (league_ahs / playercounter))   # truncate the float
 # end parse_and_dict
 
 def fa_to_plot():
@@ -120,10 +123,6 @@ def fa_to_plot():
                 else:
                     plt.scatter(player['avg_hit_speed'], player['brl_pa'], c=defcolor, label=notfastr)
                     nfa_c = 1
-    #plt.scatter(0, 0, c=facolor, label=fastr)
-    #plt.scatter(0, 0, c=defcolor, label=notfastr)
-    ptypes = np.array([fastr, notfastr])
-    ptypes_col = np.array([])
     plt.xlabel('Average Hit Speed')
     plt.ylabel('Barrels/PA')
     plt.legend(loc='upper left', scatterpoints=1)
