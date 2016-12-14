@@ -113,8 +113,11 @@ def fa_to_plot():
 
     # for line of best fit, two arrays of equal size created
     # one array corresponding to the x-value, the other with y-values
-    lobf_x = np.zeros(numplayers, dtype=np.int)
-    lobf_y = np.zeros(numplayers, dtype=np.int)
+    # using list instead of array; no idea the actual size so list is better
+    lobf_x = []
+    lobf_y = []
+    # lobf_x = np.zeros(numplayers, dtype=np.int)
+    # lobf_y = np.zeros(numplayers, dtype=np.int)
     fa_to_plot_counter = 0
 
     fa_c = 0        # free_agent counter: used to set the legend
@@ -129,21 +132,23 @@ def fa_to_plot():
                 else:
                     plt.scatter(player['avg_hit_speed'], player['brl_pa'], marker='D', c=facolor, label=fastr)
                     fa_c = 1
-                lobf_x[fa_to_plot_counter] = player['avg_hit_speed']
-                lobf_y[fa_to_plot_counter] = player['brl_pa']
+                lobf_x.append(player['avg_hit_speed'])
+                lobf_y.append(player['brl_pa'])
             else:
                 if nfa_c == 1:
                     plt.scatter(player['avg_hit_speed'], player['brl_pa'], c=defcolor)
                 else:
                     plt.scatter(player['avg_hit_speed'], player['brl_pa'], c=defcolor, label=notfastr)
                     nfa_c = 1
-                lobf_x[fa_to_plot_counter] = player['avg_hit_speed']
-                lobf_y[fa_to_plot_counter] = player['brl_pa']
+                lobf_x.append(player['avg_hit_speed'])
+                lobf_y.append(player['brl_pa'])
         fa_to_plot_counter += 1
-    lr_array = stats.linregress(lobf_x, lobf_y)
+    xarray = np.asarray(lobf_x)
+    yarray = np.asarray(lobf_y)
+    lr_array = stats.linregress(xarray, yarray)
     xa_lobf = np.linspace(80, 98, 10, dtype=int)
     ya_lobf = lr_array.slope * xa_lobf + lr_array.intercept
-    plt.plot(xa_lobf,ya_lobf)
+    plt.plot(xa_lobf, ya_lobf)
     plt.xlabel('Average Hit Speed')
     plt.ylabel('Barrels/PA')
     plt.legend(loc='upper left', scatterpoints=1)
