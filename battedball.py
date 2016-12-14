@@ -118,7 +118,6 @@ def parse_and_dict():
 # end parse_and_dict
 
 def fa_to_plot():
-    print 'hi'
     fastr = "Free Agent"
     notfastr = "Contracted Player"
     facolor = 'red'
