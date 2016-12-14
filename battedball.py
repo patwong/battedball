@@ -42,6 +42,10 @@ def parse_and_dict():
     minahs = 100
     league_ahs = 0
 
+    # useful for setting the axes of the brl_pa/avg hit speed graph
+    max_brl_pa_name = ""
+    max_brl_pa = 0
+
     # populate the dictionary
     for player in json1_data:
         pname = player['name']
@@ -77,13 +81,19 @@ def parse_and_dict():
         # sets a player's value in the dictionary
         pdict[pname] = player
         playercounter += 1
+
+        # min/max cases for stats
+        # finding player with max avg hit speed
+        # finding player with max amount of "barrels"/PA
         if player['avg_hit_speed'] > mavahs:
             mavahs = player['avg_hit_speed']
             mavahs_name = pname
         if player['avg_hit_speed'] < minahs:
             minahs = player['avg_hit_speed']
             minahs_name = pname
-
+        if player['brl_pa'] > max_brl_pa:
+            max_brl_pa_name = player['name']
+            max_brl_pa = player['brl_pa']
         # debugging statements
         # pseason = str(player['season'])     # season is treated as an int
         # pmhs = player['max_hit_speed']
@@ -91,15 +101,19 @@ def parse_and_dict():
 
         # end loop
     # more code
+
+    ############ league-wide stats!!! ############
     statdict['pc'] = playercounter
-    statdict['max_avg_hs'] = {}
-    statdict['min_avg_hs'] = {}
-    sdmax = statdict['max_avg_hs']  # useful when creating plots
-    sdmax['speed'] = mavahs
-    sdmax['name'] = mavahs_name
-    sdmin = statdict['min_avg_hs']  # useful when creating plots
-    sdmin['speed'] = minahs
-    sdmin['name'] = minahs_name
+
+    # name of player with max/min average hitting speed, max/min hitting speed
+    statdict['max_avg_hs'] = mavahs
+    statdict['max_avg_hs_name'] = mavahs_name
+    statdict['min_avg_hs'] = minahs
+    statdict['min_avg_hs_name'] = minahs_name
+
+    statdict['max_brl_pa_name'] = max_brl_pa_name       # :)
+    statdict['max_brl_pa'] = max_brl_pa
+
     statdict['league_ahs'] = float('%.2f' % (league_ahs / playercounter))   # truncate the float
 # end parse_and_dict
 
@@ -153,6 +167,8 @@ def fa_to_plot():
     plt.ylabel('Barrels/PA')
     plt.legend(loc='upper left', scatterpoints=1)
     plt.grid(True)
+    plt.ylim(0, statdict['max_brl_pa'] + 0.02)
+    plt.xlim(80, statdict['max_avg_hs'] + 1)
     plt.show()
 #end plotter
 

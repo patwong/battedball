@@ -9,4 +9,6 @@
 - added scatter plot
 - truncating floats
 	source: http://stackoverflow.com/questions/8595973/truncate-to-3-decimals-in-python
--
+
+2016.12.14
+- added line of best fit to the data
