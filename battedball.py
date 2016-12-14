@@ -1,5 +1,8 @@
-#import numpy as np
+import numpy as np
 import matplotlib.pyplot as plt
+# import scipy as sp
+from scipy import stats
+
 import json
 
 # global dictionaries
@@ -106,23 +109,41 @@ def fa_to_plot():
     notfastr = "Contracted Player"
     facolor = 'red'
     defcolor = 'blue'
-    fa_c = 0
-    nfa_c = 0
+    numplayers = statdict['pc']
+
+    # for line of best fit, two arrays of equal size created
+    # one array corresponding to the x-value, the other with y-values
+    lobf_x = np.zeros(numplayers, dtype=np.int)
+    lobf_y = np.zeros(numplayers, dtype=np.int)
+    fa_to_plot_counter = 0
+
+    fa_c = 0        # free_agent counter: used to set the legend
+    nfa_c = 0       # not free agent counter: used to set the legend
+
     for key in pdict:
         player = pdict[key]
         if player['brl_pa'] != 0:
             if player['freeagent']:
                 if fa_c == 1:
-                    plt.scatter(player['avg_hit_speed'], player['brl_pa'], c=facolor)
+                    plt.scatter(player['avg_hit_speed'], player['brl_pa'], marker='D', c=facolor)
                 else:
-                    plt.scatter(player['avg_hit_speed'], player['brl_pa'], c=facolor, label=fastr)
+                    plt.scatter(player['avg_hit_speed'], player['brl_pa'], marker='D', c=facolor, label=fastr)
                     fa_c = 1
+                lobf_x[fa_to_plot_counter] = player['avg_hit_speed']
+                lobf_y[fa_to_plot_counter] = player['brl_pa']
             else:
                 if nfa_c == 1:
                     plt.scatter(player['avg_hit_speed'], player['brl_pa'], c=defcolor)
                 else:
                     plt.scatter(player['avg_hit_speed'], player['brl_pa'], c=defcolor, label=notfastr)
                     nfa_c = 1
+                lobf_x[fa_to_plot_counter] = player['avg_hit_speed']
+                lobf_y[fa_to_plot_counter] = player['brl_pa']
+        fa_to_plot_counter += 1
+    lr_array = stats.linregress(lobf_x, lobf_y)
+    xa_lobf = np.linspace(80, 98, 10, dtype=int)
+    ya_lobf = lr_array.slope * xa_lobf + lr_array.intercept
+    plt.plot(xa_lobf,ya_lobf)
     plt.xlabel('Average Hit Speed')
     plt.ylabel('Barrels/PA')
     plt.legend(loc='upper left', scatterpoints=1)
@@ -154,7 +175,7 @@ def main():
 
     pcname = "pc"
     if pcname in statdict:
-        print "there are " + str(statdict[pcname]) + " players recorded"
+        print "There are " + str(statdict[pcname]) + " players recorded"
     else:
         print pcname + " isn't in the stat dictionary"
 
