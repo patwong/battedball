@@ -1,4 +1,4 @@
-[battedball changelog]
+[battedball3 changelog]
 2016.12.08
 - using battedball.py from testcode as base
 - setting global playercount
